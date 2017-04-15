@@ -15,8 +15,3 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
-*.odt
-*.ODT
-nbproject/private/
-tests/*
-\!tests/*.c
