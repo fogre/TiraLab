@@ -5,10 +5,9 @@
  * Functions to create and set the random IP address
  */
 
+
 #ifndef RANDOMADDRESSGENERATOR_H
 #define	RANDOMADDRESSGENERATOR_H
-
-#include "ipTable.h"
 
 
 //function to generate a random IP address;
@@ -28,7 +27,7 @@ static void randomAddressGenerator(int * mask, int * id){
     }
 }
 
-
+//Function that sets the randomly generated address to IpTable struct
 static void setAddress(int * mask, int * id, ipTable * table){
     randomAddressGenerator(mask, id);
     table->mask = *mask;

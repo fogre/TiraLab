@@ -11,7 +11,6 @@
 #ifndef IPTABLE_H
 #define	IPTABLE_H
 
-
 /* Forward declaration */
 struct ipTableTag;
 //Defining the ipTable structure

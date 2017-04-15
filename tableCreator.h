@@ -5,7 +5,6 @@
  * Creates and array of specific sized IP tables. This is used to create the
  * network
  */
-#include <math.h>
 #include "ipTable.h"
 #include "randomAddressGenerator.h"
 
@@ -30,7 +29,7 @@ static void createTables(unsigned int amount, ipTable * ipTables){
     int i;
     for(i = 1; i < amount; i++){
         setAddress(maskAddress, idAddress, &ipTables[i]);
-        printf("%d th address is: %d . %d\n", i, ipTables[i].mask, ipTables[i].identifier);
+        //printf("%d th address is: %d . %d\n", i, ipTables[i].mask, ipTables[i].identifier);
     }
 }
 

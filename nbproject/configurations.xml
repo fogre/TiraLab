@@ -40,6 +40,21 @@
       </toolsSet>
       <compileType>
       </compileType>
+      <folder path="TestFiles/f1">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f1</output>
+        </linkerTool>
+      </folder>
       <item path="ipTable.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="ipTableRoutingCell.h" ex="false" tool="3" flavor2="0">
@@ -71,6 +86,21 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <folder path="TestFiles/f1">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f1</output>
+        </linkerTool>
+      </folder>
       <item path="ipTable.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="ipTableRoutingCell.h" ex="false" tool="3" flavor2="0">

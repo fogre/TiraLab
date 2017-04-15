@@ -8,8 +8,6 @@
 #ifndef IPTABLEROUTINGCELL_H
 #define	IPTABLEROUTINGCELL_H
 
-
-
 /* Forward declaration */
 struct ipTableRoutingUnitTag;
 //ipTable destinations tablecell:
