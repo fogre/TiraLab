@@ -7,6 +7,7 @@
  */
 #include <math.h>
 #include "ipTable.h"
+#include "randomAddressGenerator.h"
 
 #ifndef TABLECREATOR_H
 #define	TABLECREATOR_H
@@ -14,24 +15,24 @@
 
 /*Function to create the array of ipTable structures with randomly given IP
   addresses*/
-void createTables(unsigned int amount, ipTable * ipTables){
+static void createTables(unsigned int amount, ipTable * ipTables){
     
     ipTables = malloc(amount * sizeof *ipTables);
+    /* Setting up the default variables for the addresses and first table 
+     * 192.168.0.1*/
+    int defaultMask = 0;
+    int defaultId = 1;
+    ipTables[0].identifier = defaultId;
+    ipTables[0].mask = defaultMask;
+    int * maskAddress = &defaultMask;
+    int * idAddress = &defaultId;
+    //create tables:
     int i;
-    for(i = 0; i < amount; i++){
-        //function to create
-        ipTables[i].ipAddress = "192.168.000.00";
-        printf("%s\n", ipTables[i].ipAddress);
+    for(i = 1; i < amount; i++){
+        setAddress(maskAddress, idAddress, &ipTables[i]);
+        printf("%d th address is: %d . %d\n", i, ipTables[i].mask, ipTables[i].identifier);
     }
 }
-
-
-//Function to create random address paces
-void createAddress(int submask, int indentifier ){
-    
-    
-}
-
 
 #endif	/* TABLECREATOR_H */
 

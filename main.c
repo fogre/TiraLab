@@ -18,7 +18,7 @@
 int main(int argc, char** argv) {
     
     ipTable * tables;
-    createTables(5, tables);
+    createTables(55000, tables);
     
     return (EXIT_SUCCESS);
 }
