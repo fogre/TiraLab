@@ -1,5 +1,4 @@
 *.odt
 *.ODT
-nbproject/private/
 tests/*
-\!tests/*.c
+!tests/*.c

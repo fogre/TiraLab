@@ -9,16 +9,23 @@
 #define	IPTABLEROUTINGCELL_H
 
 /* Forward declaration */
-struct ipTableRoutingUnitTag;
+struct ipTableRoutingCellTag;
 //ipTable destinations tablecell:
-typedef struct ipTableRoutingUnitTag{
+typedef struct ipTableRoutingCellTag{
     
     int destination;
     int netmask;
     struct ipTableTag * nextHop;
     //int metric;
     
-}ipTableRoutingUnit;
+}ipTableRoutingCell;
+
+/*static void setRoutingCell(ipTableRoutingCell * rCell, ipTable * table){
+	rCell->destination=table.identifier;
+	rCell->mask=table.mask;
+	rCell->nextHop
+
+}*/
 
 #endif	/* IPTABLEROUTINGCELL_H */
 

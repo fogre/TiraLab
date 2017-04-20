@@ -1,23 +1,19 @@
 /*
- * Test are done with CMocka. For now at least. 
+ * Unit tests for randomAddressGenerator.h
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include <setjmp.h>
 #include <cmocka.h>
-#include "../ipTable.h"
-#include "../randomAddressGenerator.h"
+#include "../src/headers/ipTable.h"
+#include "../src/headers/randomAddressGenerator.h"
 
-
-/* A test case that does nothing and succeeds. */
-static void null_test_success(void **state) {
-    (void) state;
-}
-
-//test that the method creates an random value for id and that it is
-//within given range
+/*test that the method creates an random value for id and that it is
+  within given range
+*/
 static void generatesRandomAddress(){
     int m = 0;
     int i = 1;
@@ -25,7 +21,7 @@ static void generatesRandomAddress(){
     int * id = &i;
     randomAddressGenerator(mask, id);
     assert_int_equal(*mask, 0);
-    assert_in_range(*id,0,17);
+    assert_in_range(*id,2,17);
 }
 
 //Id address is so big that the mask address value is changed as well. Id is not over 1000
@@ -36,11 +32,12 @@ static void generatesAddressThatChangesMask(){
     int * id = &i;
     randomAddressGenerator(mask, id);
     assert_int_equal(*mask, 3);
-    assert_true(*id > 0 && *id <= 17);
+    assert_in_range(*id,1,17);
 }
 
 /*An ipTable is created and a random address is given into it. The given address 
- * should be same as the result that comes from the genereteAddress function*/
+  should be same as the result that comes from the genereteAddress function
+*/
 static void generatedAddressIsGivenToIpTable(){
     int m = 1;
     int i = 992;

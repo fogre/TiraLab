@@ -7,8 +7,8 @@
 #include <stddef.h>
 #include <setjmp.h>
 #include <cmocka.h>
-#include "../ipTable.h"
-#include "../tableCreator.h"
+#include "../src/headers/ipTable.h"
+#include "../src/headers/tableCreator.h"
 
 static int setup(void **state){
     ipTable *tabless;

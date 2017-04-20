@@ -9,7 +9,6 @@
 #ifndef RANDOMADDRESSGENERATOR_H
 #define	RANDOMADDRESSGENERATOR_H
 
-
 //function to generate a random IP address;
 static void randomAddressGenerator(int * mask, int * id){
     
@@ -33,9 +32,6 @@ static void setAddress(int * mask, int * id, ipTable * table){
     table->mask = *mask;
     table->identifier = *id;
 }
-
-
-
 
 #endif	/* RANDOMADDRESSGENERATOR_H */
 
