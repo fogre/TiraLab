@@ -8,10 +8,4 @@ include_directories(scr/headers)
 set(SOURCE
 	src/main.c)
 
-set(HEADERS
-	src/headers/ipTable.h
-	src/headers/ipTableRoutingCell.h
-	src/headers/randomAddressGenerator.h
-	src/headers/tableCreator.h)
-
 add_executable(IpGrapher ${SOURCE} ${HEADERS})

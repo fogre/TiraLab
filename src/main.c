@@ -10,12 +10,13 @@
 #include <time.h>
 #include "./headers/tableCreator.h"
 #include "./headers/ipTable.h"
+#include "./headers/router.h"
 
 
 int main(int argc, char** argv) {
 
 	srand(time(NULL));
-	int amount = 55;    
+	int amount = 200;    
     ipTable * tables;
     int index = 5;
 
@@ -39,12 +40,22 @@ int main(int argc, char** argv) {
         setAddress(&addressMask, &addressId, &tables[i]);
         setDestinations(&tables[i],tables, i);
     }
-
+    int idl = tables[amount-1].identifier;
+    int subl = tables[amount-1].mask;
    	for(int x = 0; x < amount; x++){
-   		//printf("asd\n");
    		printDestinations(&tables[x]);
    	}
-    
+    int * visited = malloc(15* sizeof(int));
+    for(int x = 0; x < 15; x++){
+      visited[x] = 0;
+    }
+    ipTable * destination = traceRoute(&tables[0], &visited, 2000, 168, subl, idl);
+    printf("address: %i\n", idl);
+
+    for(int z = 0; z < 15; z++){
+     printf("visited: %i\n", visited[z]);
+    }
+
     free(tables);
     
     return (EXIT_SUCCESS);
