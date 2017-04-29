@@ -1,5 +1,6 @@
 /*
  * Unit tests for randomAddressGenerator.h
+ * Tests use Cmocka
  */
 
 #include <stdlib.h>

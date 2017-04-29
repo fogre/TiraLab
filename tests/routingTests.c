@@ -14,7 +14,7 @@
 #include "../src/headers/randomAddressGenerator.h"
 #include "../src/headers/routing.h"
 
-
+/*setup method for some of the tests*/
 static int setup(void **state){
 	srand(time(NULL));	
 	int amount = 100;    
@@ -35,7 +35,7 @@ static int setup(void **state){
     *state = tables;
     return 0;
 }
-
+/*teardown for some of the tests*/
 static int teardown(void **state){
     ipTable * set = *state;
     freeDestinations(set, 100);

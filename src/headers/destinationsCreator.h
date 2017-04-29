@@ -55,7 +55,7 @@ static void selectRandomDestinations(ipTable * table, ipTable * createdTables, i
   @param table: IpTable to set the destinations
   @param createdTables: Previously created tables
   @param numberOfCreated: Number of created tables
-  Function sets random amount between 1-4 ipRoutingTableCells to tables destinations
+  Function sets random amount between 1-5 to tables destinations
 */
 static void setDestinations(ipTable * table, ipTable * createdTables, int numberOfCreated){
 	int numberToLink = 5;

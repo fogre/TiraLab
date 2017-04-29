@@ -1,5 +1,6 @@
 /*
- * Test are done with CMocka. For now at least. 
+ * Tests for destinationsCreator.h
+ * The tests use Cmocka
  */
 
 #include <stdlib.h>

@@ -36,7 +36,7 @@ static void setupTable(ipTable * table){
 	table->destinations = NULL;
 }
 
-//Function that sets the randomly generated address to IpTable struct
+//Function that sets the randomly generated address to IpTable struct. See randomAddressGenerator.h
 static void setAddress(int * mask, int * id, ipTable * table){
     randomAddressGenerator(mask, id);
     table->mask = *mask;
@@ -50,7 +50,7 @@ static void freeDestinations(ipTable * tables, int size){
     }
 
 }
-
+//print tables destinations
 static void printDestinations(ipTable * table){
     printf("%lu Destinations for 192.168.%u.%u:\n",table->lengthOfDestinations, table->mask, table->identifier);
     for(int j = 0; j < table->lengthOfDestinations; j++){
