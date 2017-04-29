@@ -43,8 +43,7 @@ static void selectRandomDestinations(ipTable * table, ipTable * createdTables, i
 		if(numberOfLinks > 3){
 			break;
 		}
-	}
-	//in case after the for there aren't any destinations set, we set one
+	}//in case after the for there aren't any destinations set, we set one
 	if(numberOfLinks == 0){
 		random = rand() % numberToLink+1;
 		setSingleDestination(table, &createdTables[base+random-1]);

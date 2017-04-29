@@ -26,12 +26,5 @@ static void randomAddressGenerator(int * mask, int * id){
     }
 }
 
-//Function that sets the randomly generated address to IpTable struct
-static void setAddress(int * mask, int * id, ipTable * table){
-    randomAddressGenerator(mask, id);
-    table->mask = *mask;
-    table->identifier = *id;
-}
-
 #endif	/* RANDOMADDRESSGENERATOR_H */
 

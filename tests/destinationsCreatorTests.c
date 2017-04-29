@@ -81,6 +81,7 @@ static void setDestinationsForCreatedTablesSmallerNumberToLink(void **state){
     ipTable * set = *state;
     setDestinations(&set[3], set, 3);
     assert_true(set[3].lengthOfDestinations > 0);
+    assert_true(set[3].lengthOfDestinations < 4);
     for(int i = 0; i < set[3].lengthOfDestinations; i++){
         assert_true(set[3].destinations[i] == &set[0] 
                     || set[3].destinations[i] == &set[1]
@@ -106,6 +107,27 @@ static void setDestinationsForCreatedTablesGreaterNumberToLink(void **state){
     }
 }
 
+/*creates 2000 tables and checks that they all have destinations*/
+static void create2000TablesAndTheyShouldBeConnected(){
+    ipTable *tables = malloc(2000 * sizeof *tables);
+    assert_non_null(tables);
+    int addressMask = 0;
+    int addressId = 1;
+    tables[0].identifier = addressId;
+    tables[0].mask = addressMask;
+    setupTable(&tables[0]);
+    //create tables:
+   for(int i = 1; i < 2000; i++){
+        setupTable(&tables[i]);
+        setAddress(&addressMask, &addressId, &tables[i]);
+        setDestinations(&tables[i],tables, i);
+    }
+    for(int j = 1999; j > 0; j--){
+        assert_non_null(tables[j].destinations);
+    }
+    free(tables);    
+}
+
 
 int main(void) {
     const struct CMUnitTest tests[] = {
@@ -114,6 +136,7 @@ int main(void) {
         cmocka_unit_test_setup_teardown(setsAtleastOneRandomDestination, setup, teardown),
         cmocka_unit_test_setup_teardown(setDestinationsForCreatedTablesSmallerNumberToLink, setup, teardown),
         cmocka_unit_test_setup_teardown(setDestinationsForCreatedTablesGreaterNumberToLink, setup, teardown),
+        cmocka_unit_test(create2000TablesAndTheyShouldBeConnected),
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);
