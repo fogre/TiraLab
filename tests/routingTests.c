@@ -57,12 +57,12 @@ static void testCheckIfRightAddress(void ** state){
 	assert_int_equal(checkIfRightAddress(&set[random-1],168, mask,id), 0);
 }
 
-/*if second param int is > first int and >= 0, the method should return 1 and otherwise 0*/
+/*if second param int is > first int and >= 0, the method should return 1 and otherwise 0
 static void testmaskAddressComparison(){
 	assert_int_equal(maskAddressComparison(5, 3), 1);
 	assert_int_equal(maskAddressComparison(3, 5), 0);
 	assert_int_equal(maskAddressComparison(1, 0), 1);
-}
+}*/
 /*checkNextTable should return the right int compared to the value of the tables visited integer*/
 static void testCheckNextTable(void ** state){
 	ipTable * set = *state;
@@ -192,7 +192,7 @@ static void set80000destinationsAndFindRouteToRandomAndLastTable(){
 int main(void) {
     const struct CMUnitTest tests[] = {
     	cmocka_unit_test_setup_teardown(testCheckIfRightAddress, setup, teardown),
-    	cmocka_unit_test(testmaskAddressComparison),
+    	//cmocka_unit_test(testmaskAddressComparison),
     	cmocka_unit_test_setup_teardown(testCheckNextTable, setup, teardown),
     	cmocka_unit_test(set1000destinationsAndFindRouteToLastTable),
         cmocka_unit_test(set2000destinationsAndFindRouteToRandomTable),

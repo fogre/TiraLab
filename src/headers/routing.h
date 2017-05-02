@@ -8,7 +8,7 @@
 #define	ROUTING_H
 
 
-//Function to check if the address is the destination
+//Function to check if the address is the searched destination
 static int checkIfRightAddress(ipTable * table, int netB, int maskB,int idB){
 	if(table->netmask == netB && table->mask == maskB && table->identifier == idB){
 	   return 1;
@@ -17,20 +17,20 @@ static int checkIfRightAddress(ipTable * table, int netB, int maskB,int idB){
 }
 
 /*Compares two ints together and returns true, if b is smaller and bigger than zero. 
-  Used to choose next address. See getNextHop*/
+  Used to choose next address. See getNextHop
 static int maskAddressComparison(int a, int b){
 	if(b <= a){
 		return 1;
 	}
 	return 0;
 }
-
+//comparison function for netmasks
 static int netmaskAddressComparison(int a, int b){
 	if(b < a){
 		return 1;
 	}
 	return 0;
-}
+}*/
 
 /*Function checks if the next table is visited, a dead end or if it is the right destination. See getNextHop*/
 static int checkNextTable(ipTable * nextTable, int netmask, int mask,int id){	
@@ -40,10 +40,10 @@ static int checkNextTable(ipTable * nextTable, int netmask, int mask,int id){
 		return 1;
 	}else if(nextTable->visited == 2){ 
 		return 2;
-	}else if(maskAddressComparison(mask, nextTable->mask) && (nextTable->lengthOfDestinations > 1)){
-		return 4;
-	}else if(netmaskAddressComparison(netmask, nextTable->netmask) && (nextTable->lengthOfDestinations > 1)){
+	}else if(nextTable->netmask < netmask && (nextTable->lengthOfDestinations > 1)){
 		return 4;	
+	}else if(nextTable->mask <= mask && (nextTable->lengthOfDestinations > 1)){
+		return 4;
 	}else if(checkIfRightAddress(nextTable, netmask, mask, id)){
 		return 4;
 	}//nextTable is a dead end

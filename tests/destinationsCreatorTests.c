@@ -17,12 +17,13 @@
 static int setup(void **state){
     ipTable *tables = malloc(7 * sizeof *tables);
     assert_non_null(tables);
+    int netmask = 168;
     int addressMask = 0;
     int addressId = 1;
     //create tables:
    for(int i = 0; i < 7; i++){
         setupTable(&tables[i]);
-        setAddress(&addressMask, &addressId, &tables[i]);
+        setAddress(&netmask, &addressMask, &addressId, &tables[i]);
     }
     *state = tables;
     return 0;
@@ -112,6 +113,7 @@ static void setDestinationsForCreatedTablesGreaterNumberToLink(void **state){
 static void create2000TablesAndTheyShouldBeConnected(){
     ipTable *tables = malloc(2000 * sizeof *tables);
     assert_non_null(tables);
+    int netmask = 168;
     int addressMask = 0;
     int addressId = 1;
     tables[0].identifier = addressId;
@@ -120,7 +122,7 @@ static void create2000TablesAndTheyShouldBeConnected(){
     //create tables:
    for(int i = 1; i < 2000; i++){
         setupTable(&tables[i]);
-        setAddress(&addressMask, &addressId, &tables[i]);
+        setAddress(&netmask, &addressMask, &addressId, &tables[i]);
         setDestinations(&tables[i],tables, i);
     }
     for(int j = 1999; j > 0; j--){
