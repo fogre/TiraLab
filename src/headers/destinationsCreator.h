@@ -27,7 +27,7 @@ static void setSingleDestination(ipTable * table, ipTable * dest){
   @param createdTables: Previously created tables
   @param numberOfCreated: Number of created tables
   @param numberToLink: Defines how many previously created tables are taken into account.
-  Function sets 1-4 previously created ipTables to tables destinations. See setDestinations
+  Function sets 1-5 previously created ipTables to tables destinations. See setDestinations
 */
 static void selectRandomDestinations(ipTable * table, ipTable * createdTables, int numberOfCreated, int numberToLink){
 	int random;

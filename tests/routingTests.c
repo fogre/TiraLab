@@ -21,17 +21,19 @@ static int setup(void **state){
     ipTable * tables;
     tables = malloc(amount * sizeof *tables);
     assert_non_null(tables);
-    int addressMask = 0;
-    int addressId = 1;
-   	tables[0].identifier = addressId;
-   	tables[0].mask = addressMask;
-    setupTable(&tables[0]);
-    //create tables:
-    for(int i = 1; i < amount; i++){
-        setupTable(&tables[i]);
-        setAddress(&addressMask, &addressId, &tables[i]);
-        setDestinations(&tables[i],tables, i);
-    }
+	int addressNetmask = 168;
+	int addressMask = 0;
+	int addressId = 1;
+	tables[0].netmask = addressNetmask;
+	tables[0].identifier = addressId;
+	tables[0].mask = addressMask;
+	setupTable(&tables[0]);
+	//create tables:
+	for(int i = 1; i < amount; i++){
+		setupTable(&tables[i]);
+		setAddress(&addressNetmask, &addressMask, &addressId, &tables[i]);
+		setDestinations(&tables[i],tables, i);
+	}
     *state = tables;
     return 0;
 }
@@ -51,15 +53,15 @@ static void testCheckIfRightAddress(void ** state){
 	//int net = set[random].netmask;
 	int mask = set[random].mask;
 	int id = set[random].identifier;
-	assert_int_equal(checkIfRightAddress(&set[random],mask,id), 1);
-	assert_int_equal(checkIfRightAddress(&set[random-1],mask,id), 0);
+	assert_int_equal(checkIfRightAddress(&set[random],168, mask,id), 1);
+	assert_int_equal(checkIfRightAddress(&set[random-1],168, mask,id), 0);
 }
 
 /*if second param int is > first int and >= 0, the method should return 1 and otherwise 0*/
-static void testAddressComparison(){
-	assert_int_equal(addressComparison(5, 3), 1);
-	assert_int_equal(addressComparison(3, 5), 0);
-	assert_int_equal(addressComparison(1, -1), 0);
+static void testmaskAddressComparison(){
+	assert_int_equal(maskAddressComparison(5, 3), 1);
+	assert_int_equal(maskAddressComparison(3, 5), 0);
+	assert_int_equal(maskAddressComparison(1, 0), 1);
 }
 /*checkNextTable should return the right int compared to the value of the tables visited integer*/
 static void testCheckNextTable(void ** state){
@@ -68,9 +70,9 @@ static void testCheckNextTable(void ** state){
 	set[20].visited = 3;
 	set[50].visited = 1;
 	set[83].visited = 2;
-	assert_int_equal(checkNextTable(&set[20],999, 999), 0);
-	assert_int_equal(checkNextTable(&set[50],999, 999), 1);
-	assert_int_equal(checkNextTable(&set[83],999, 999), 2);
+	assert_int_equal(checkNextTable(&set[20],999, 999, 999), 0);
+	assert_int_equal(checkNextTable(&set[50],999, 999, 999), 1);
+	assert_int_equal(checkNextTable(&set[83],999, 999, 999), 2);
 }
 
 /*This method gets tested in below:
@@ -83,7 +85,8 @@ static void testGetNextHop(void ** state){
 	assert_true(getNextHop(table, 168, 999, 999) == table->destinations[size-1]);
 }*/
 
-/*Sets 1000 times 1000 node size network and tries to find a path to the last node*/
+/*Sets 1000 times 1000 node size network and tries to find a path to the last node
+  The destination table shound't be null, and it should be the last node*/
 static void set1000destinationsAndFindRouteToLastTable(){
 	srand(time(NULL));
 	for(int i = 0; i < 1000; i++){
@@ -91,25 +94,28 @@ static void set1000destinationsAndFindRouteToLastTable(){
 	    ipTable * tables;
 	    tables = malloc(amount * sizeof *tables);
 	    assert_non_null(tables);
-	    int addressMask = 0;
-	    int addressId = 1;
-	   	tables[0].identifier = addressId;
-	   	tables[0].mask = addressMask;
-	    setupTable(&tables[0]);
-	    //create tables:
-	    for(int i = 1; i < amount; i++){
-	        setupTable(&tables[i]);
-	        setAddress(&addressMask, &addressId, &tables[i]);
-	        setDestinations(&tables[i],tables, i);
-	    }
-		ipTable * destination = traceRoute(&tables[0], 1000, 168, tables[amount-1].mask, tables[amount-1].identifier);
-		printf("ma %i\n", i);
+		int addressNetmask = 168;
+		int addressMask = 0;
+		int addressId = 1;
+		tables[0].netmask = addressNetmask;
+		tables[0].identifier = addressId;
+		tables[0].mask = addressMask;
+		setupTable(&tables[0]);
+		//create tables:
+		for(int i = 1; i < amount; i++){
+			setupTable(&tables[i]);
+			setAddress(&addressNetmask, &addressMask, &addressId, &tables[i]);
+			setDestinations(&tables[i],tables, i);
+		}
+		ipTable * destination = traceRoute(&tables[0], 1000, tables[amount-1].netmask, tables[amount-1].mask, tables[amount-1].identifier);
 		assert_true(destination != NULL);
+		assert_true(destination == &tables[amount-1]);
 		freeDestinations(tables, amount);
 		free(tables);
 	}	
 }	
-/*Sets 1000 times 2000 node size network and tries to find a path to a random node*/
+/*Sets 1000 times 2000 node size network and tries to find a path to a random node
+  The destination table shound't be null, the found table should be the same as the searched table and the index should be the right one*/
 static void set2000destinationsAndFindRouteToRandomTable(){
 	srand(time(NULL));
 	for(int i = 0; i < 1000; i++){
@@ -117,24 +123,25 @@ static void set2000destinationsAndFindRouteToRandomTable(){
 	    ipTable * tables;
 	    tables = malloc(amount * sizeof *tables);
 	    assert_non_null(tables);
-	    int addressMask = 0;
-	    int addressId = 1;
-	   	tables[0].identifier = addressId;
-	   	tables[0].mask = addressMask;
-	    setupTable(&tables[0]);
-	    //create tables:
-	    for(int i = 1; i < amount; i++){
-	        setupTable(&tables[i]);
-	        setAddress(&addressMask, &addressId, &tables[i]);
-	        setDestinations(&tables[i],tables, i);
-	    }
-	    int random = rand() % 1000;
-		ipTable * destination = traceRoute(&tables[0], amount, 168, tables[random].mask, tables[random].identifier);
+		int addressNetmask = 168;
+		int addressMask = 0;
+		int addressId = 1;
+		tables[0].netmask = addressNetmask;
+		tables[0].identifier = addressId;
+		tables[0].mask = addressMask;
+		setupTable(&tables[0]);
+		//create tables:
+		for(int i = 1; i < amount; i++){
+			setupTable(&tables[i]);
+			setAddress(&addressNetmask, &addressMask, &addressId, &tables[i]);
+			setDestinations(&tables[i],tables, i);
+		}
+	    int random = rand() % amount;
+		ipTable * destination = traceRoute(&tables[0], amount, tables[random].netmask, tables[random].mask, tables[random].identifier);
 		printf("ma %i\n", i);
 		int o;
 		for(o = 0; o < random+10; o++){
 			if(tables[o].mask == tables[random].mask && (tables[o].identifier == tables[random].identifier)){
-				printf("it exists! index = %i random=%i\n", o, random);
 				break;
 			}
 		}
@@ -147,14 +154,49 @@ static void set2000destinationsAndFindRouteToRandomTable(){
 }	
 
 
+/*Sets 1000 times 2000 node size network and tries to find a path to a random node
+  The destination table shound't be null, the found table should be the same as the searched table and the index should be the right one*/
+static void set80000destinationsAndFindRouteToRandomAndLastTable(){
+	srand(time(NULL));
+	int amount = 80000;    
+    ipTable * tables;
+    tables = malloc(amount * sizeof *tables);
+    assert_non_null(tables);
+	int addressNetmask = 168;
+	int addressMask = 0;
+	int addressId = 1;
+	tables[0].netmask = addressNetmask;
+	tables[0].identifier = addressId;
+	tables[0].mask = addressMask;
+	setupTable(&tables[0]);
+	//create tables:
+	for(int i = 1; i < amount; i++){
+		setupTable(&tables[i]);
+		setAddress(&addressNetmask, &addressMask, &addressId, &tables[i]);
+		setDestinations(&tables[i],tables, i);
+	}
+    int random = rand() % amount;
+	ipTable * destination = traceRoute(&tables[0], amount, tables[random].netmask, tables[random].mask, tables[random].identifier);
+	assert_true(destination != NULL);
+	assert_true(destination == &tables[random]);
+	resetSearch(tables, amount);
+	destination = traceRoute(&tables[0], amount, tables[amount-1].netmask, tables[amount-1].mask, tables[amount-1].identifier);
+	assert_true(destination != NULL);
+	assert_true(destination == &tables[amount-1]);
+	freeDestinations(tables, amount);
+	free(tables);
+}	
+
+
+
 int main(void) {
     const struct CMUnitTest tests[] = {
     	cmocka_unit_test_setup_teardown(testCheckIfRightAddress, setup, teardown),
-    	cmocka_unit_test(testAddressComparison),
+    	cmocka_unit_test(testmaskAddressComparison),
     	cmocka_unit_test_setup_teardown(testCheckNextTable, setup, teardown),
-    	//cmocka_unit_test_setup_teardown(testGetNextHop, setup, teardown),
     	cmocka_unit_test(set1000destinationsAndFindRouteToLastTable),
         cmocka_unit_test(set2000destinationsAndFindRouteToRandomTable),
+        cmocka_unit_test(set80000destinationsAndFindRouteToRandomAndLastTable),
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);

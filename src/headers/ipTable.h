@@ -30,17 +30,24 @@ typedef struct ipTableTag{
 
 //function ot setup the table in tableCreator.h
 static void setupTable(ipTable * table){
-    table->netmask=168;
     table->visited=0;
 	table->lengthOfDestinations=0;
 	table->destinations = NULL;
 }
 
 //Function that sets the randomly generated address to IpTable struct. See randomAddressGenerator.h
-static void setAddress(int * mask, int * id, ipTable * table){
-    randomAddressGenerator(mask, id);
+static void setAddress(int * netmask, int * mask, int * id, ipTable * table){
+    randomAddressGenerator(netmask, mask, id);
+    table->netmask = *netmask;
     table->mask = *mask;
     table->identifier = *id;
+}
+
+//function resets the ipTables visited field to 0 for new search
+static void resetSearch(ipTable * tables, int amount){
+        for(int i = 0; i < amount; i++){
+            tables[i].visited = 0;
+    }
 }
 
 //free tables destinations
