@@ -2,3 +2,4 @@
 *.ODT
 tests/*
 !tests/*.c
+!tests/*.txt

@@ -38,45 +38,28 @@ int main(int argc, char** argv) {
   double time_of_table_creation = (double)(begin - end) / CLOCKS_PER_SEC;
   
 
-
-
   //count time it takes to find the last table with traceRoute function
   begin = clock();
   ipTable * destination = traceRoute(&tables[0], amount, tables[amount-1].netmask, tables[amount-1].mask, tables[amount-1].identifier);
   end = clock();
   double time_of_finding_last_table_traceroute = (double)(begin - end) / CLOCKS_PER_SEC;
- 
-  //count time it takes to find the last table with a for loop;
-  clock_t begin2 = clock();
-  for(int j = 0; j < amount; j++){
-  	for(int c = 0; c < tables[j].lengthOfDestinations; c++){
-	  	if(tables[j].destinations[c] == &tables[amount-1]){
-	  		break;
-	  	}
-	}  	
-  }
-  clock_t end2 = clock();
-  double time_of_finding_last_table_with_for = (double)(begin2 - end2) / CLOCKS_PER_SEC;
-
-
-
-
   resetSearch(tables, amount);
-  //count time it takes to find the last table with traceRoute function
-  int random = rand() % amount;
+
+  //count time it takes to find the random table with traceRoute function
+  int random1 = rand() % amount;
   begin = clock();
-  destination = traceRoute(&tables[0], amount, tables[random].netmask, tables[random].mask, tables[random].identifier);
+  destination = traceRoute(&tables[0], amount, tables[random1].netmask, tables[random1].mask, tables[random1].identifier);
   end = clock();
-  double time_of_finding_random_table_traceroute = (double)(begin - end) / CLOCKS_PER_SEC;
-  //
-  begin2 = clock();
-  for(int j = 0; j < amount; j++){
-  	if(&tables[j] == &tables[random]){
-  		break;
-  	}
-  }
-  end2 = clock();
-  double time_of_finding_random_table_with_for = (double)(begin2 - end2) / CLOCKS_PER_SEC;
+  double time_of_finding_random_table_traceroute1 = (double)(begin - end) / CLOCKS_PER_SEC;
+  resetSearch(tables, amount);
+
+  //count time it takes to find the last random with traceRoute function
+  int random2 = rand() % amount;
+  begin = clock();
+  destination = traceRoute(&tables[0], amount, tables[random2].netmask, tables[random2].mask, tables[random2].identifier);
+  end = clock();
+  double time_of_finding_random_table_traceroute2 = (double)(begin - end) / CLOCKS_PER_SEC;
+  
 
 
   freeDestinations(tables, amount);
@@ -84,9 +67,10 @@ int main(int argc, char** argv) {
 
   clock_t endTime = clock();
   double total_time_spent = (double)(endTime - startTime) / CLOCKS_PER_SEC;
-  printf("time of creating 1000000 tables and setting destinations: %fs\n", time_of_table_creation);
-  printf("time of finding last table with traceroute: %fs | with for: %f\n", time_of_finding_last_table_traceroute, time_of_finding_last_table_with_for);
-  printf("time of finding last table with traceroute: %fs | with for: %f\n", time_of_finding_random_table_traceroute, time_of_finding_random_table_with_for);
+  printf("time to create 1000000 tables and set destinations: %fs\n", time_of_table_creation);
+  printf("time of finding last table with traceroute: %fs\n", time_of_finding_last_table_traceroute);
+  printf("time of finding first random table %i table with traceroute: %fs\n", random1, time_of_finding_random_table_traceroute1);
+  printf("time of finding second random table %i table with traceroute: %fs\n", random2, time_of_finding_random_table_traceroute1);
   printf("Total time spent: %fs\n", total_time_spent);
 
   return (EXIT_SUCCESS);
