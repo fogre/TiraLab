@@ -27,7 +27,7 @@ void setAddress(int * netmask, int * mask, int * id, ipTable * table){
     table->identifier = *id;
 }
 
-//function resets the ipTables visited field to 0 for new search
+//function resets the ipTables visited field to 0 for a new search
 void resetSearch(ipTable * tables, int amount){
         for(int i = 0; i < amount; i++){
             tables[i].visited = 0;

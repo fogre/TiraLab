@@ -15,7 +15,7 @@ int checkIfRightAddress(ipTable * table, int netB, int maskB,int idB){
 	return 0;    
 }
 
-/*Function checks if the next table is visited, a dead end or if it is the right destination. See getNextHop*/
+/*Function checks if the next table is visited, a dead end or in that case if it is the right destination. See getNextHop*/
 int checkNextTable(ipTable * nextTable, int netmask, int mask,int id){	
 	if(nextTable->visited == 3){
 		return 0;
@@ -55,8 +55,11 @@ ipTable * getNextHop(ipTable * table, int net, int mask, int id){
 		}else if(checker == 2){
 			indexOfLastDead = j;
 			continue;
-		}//unvisited "child" found:
+		}//unvisited "child" found, check if it is the destination:
     	nextDestination = table->destinations[j];
+    	if(checkIfRightAddress(nextDestination, net, mask, id)){
+    		return nextDestination;
+    	}
 	}/*if nextDestination is still null, tables all destinations have been visited (there is a cycle).*/
 	if(!nextDestination && (indexOflastVisited >=0)){
 		table->visited=2;//set table is visited twice
@@ -89,8 +92,8 @@ ipTable * traceRoute(ipTable* start, int hopCount, int netmask, int submask, int
 			printf("address found! %i.%i.%i   | hopcount: %i\n", netmask, submask, identifier, h+1);
 			return next;
 		}
-		printf("next destination is: 192.%u.%u.%u\n",next->netmask, next->mask, next->identifier);
+		printf("next destination is: %u.%u.%u\n",next->netmask, next->mask, next->identifier);
 	}
-	printf("not found! %i.%i.%i | hopcount: %i\n",netmask, submask, identifier, hopCount);
+	printf("not found (the address doesent exist)! %i.%i.%i | hopcount: %i\n",netmask, submask, identifier, hopCount);
 	return NULL;
 }
