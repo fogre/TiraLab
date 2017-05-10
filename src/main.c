@@ -11,7 +11,6 @@
 #include <string.h>
 #include <time.h>
 #include "./headers/ipTable.h"
-#include "./headers/randomAddressGenerator.h"
 #include "./headers/destinationsCreator.h"
 #include "./headers/routing.h"
 
@@ -92,7 +91,7 @@ int main(int argc, char** argv) {
       setAddress(&addressNetmask, &addressMask, &addressId, &tables[i]);
       setDestinations(&tables[i],tables, i);
   }
-
+  //init traceRouting
   int net=-1, mask=-1, id=-1, option;
   char addressToLook[5];
   ipTable * destination = NULL;
