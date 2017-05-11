@@ -15,7 +15,7 @@ struct ipTableTag;
 //Defining the ipTable structure
 typedef struct ipTableTag{
     
-    //Address is "192.netmask.mask.identifier"
+    //Address is "netmask.mask.identifier"
     unsigned int netmask;
     unsigned int mask;
     unsigned int identifier;
@@ -25,6 +25,7 @@ typedef struct ipTableTag{
     struct ipTableTag **destinations;
     //char "integer" used for routing purposes. 0=unvisited, 1 = visited once, 2 = visited twice, 3 = deadend;
     char visited;
+    char unvisitedChildren;
     
 }ipTable;
 

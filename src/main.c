@@ -61,12 +61,12 @@ int main(int argc, char** argv) {
   //if command line argument given, validate it
   if(argc > 1){
     if(!isUnsignedNumber(argv[1])){
-      printf("Only the first command line argument is taken into account and it should be a positive integer between 10-1200000!\nExiting\n");
+      printf("Only the first command line argument is taken into account and it should be a positive integer between 100-1200000!\nExiting\n");
       return (EXIT_FAILURE);
     }
     amount = atoi(argv[1]);
-    if(amount < 10 || amount > 1200000){
-      printf("The number of nodes in the network to be created should be between 10-1200000!\nExiting\n");
+    if(amount < 100 || amount > 1200000){
+      printf("The number of nodes in the network to be created should be between 100-1200000!\nExiting\n");
       return (EXIT_FAILURE);
     }
   }
@@ -100,25 +100,28 @@ int main(int argc, char** argv) {
    option = 1;
    printf("\n> A network of %i nodes created with addresses between 168.0.1-%u.%u.%u (netmask.submask.identifier)\n", 
          amount, tables[amount-1].netmask, tables[amount-1].mask, tables[amount-1].identifier);
-   printf("> Search for a destination in the network by giving the netmask, submask, and indentifier separately.\n  Exit by giving an empty line (press enter)\n\n"); 
+   printf("> Search for a destination in the network by giving the netmask, submask, and indentifier separately.\n");
+   printf("> Exit by giving an empty line (press enter)\n\n"); 
+
    switch(option){
+
     case 1://ask for netmask and check if it's valid
       option = getLine("> Give the netmask address> ", addressToLook, sizeof(addressToLook));
       if(option == 1){
         if(isUnsignedNumber(addressToLook)){
           net = atoi(addressToLook);
           if(net < tables[0].netmask || net > tables[amount-1].netmask){
-            printf("\nThe given netmask address is not within the created address space!\n");
+            printf("\n\n\nThe given netmask address is not within the created address space!\n");
             break;
           }
         }else{
-          printf("\nInvalid netmask address!\n");
+          printf("\n\n\nInvalid netmask address!\n");
           break;
         }
       }else if(option == 5){  
         break;
       }else{
-      printf("\nNot a valid netmask address!\n"); 
+      printf("\n\n\nNot a valid netmask address!\n"); 
       break;
       }
 
@@ -128,18 +131,18 @@ int main(int argc, char** argv) {
         if(isUnsignedNumber(addressToLook) || ((strlen(addressToLook) == 1) && addressToLook[0]=='0') ){
           mask = atoi(addressToLook);
           if(mask < 0 || mask > 999){
-            printf("\nThe given mask address is not within the created address space.\n");
+            printf("\n\n\nThe given mask address is not within the created address space.\n");
             break;
           }
         }else{
-          printf("\nInvalid mask address!\n");
+          printf("\n\n\nInvalid mask address!\n");
           break;
         }
       }else if(option == 5){ 
         option = 1;
         break;
       }else{
-      printf("\nNot a valid mask address!\n");
+      printf("\n\n\nNot a valid mask address!\n");
       break;
       }
 
@@ -147,24 +150,24 @@ int main(int argc, char** argv) {
       option = getLine("> Give the identifier address> ", addressToLook, sizeof(addressToLook));
       if(option == 1){
           if(isUnsignedNumber(addressToLook)){
-          id = atoi(addressToLook);
-          if(id < 1 || id > 999){
-            printf("\nThe given netmask address is not within the created address space.\n");
+            id = atoi(addressToLook);
+            if(id < 1 || id > 999){
+              printf("\n\n\nThe given netmask address is not within the created address space.\n");
+              break;
+            }//search for the given destination:
+              printf("\n> Starting tracerouting...\n\n");
+              destination = traceRoute(&tables[0], amount, net, mask, id);
+              resetSearch(tables, amount);
+          }else{
+            printf("\n\n\nInvalid identifier address!\n");
             break;
-          }//search for the given destination:
-          printf("\n> Starting tracerouting...\n\n");
-          destination = traceRoute(&tables[0], amount, net, mask, id);
-          resetSearch(tables, amount);
-        }else{
-          printf("\nInvalid identifier address!\n");
-          break;
-        }
+          }
       }else if(option == 5){
         option = 1; 
         break;
       }else{
-      printf("\nNot a valid identifier address!\n");
-      break;
+        printf("\n\n\nNot a valid identifier address!\n");
+        break;
       }
    }//end switch(option)   
   }//end while

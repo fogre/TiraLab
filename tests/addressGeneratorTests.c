@@ -12,8 +12,7 @@
 #include "../src/headers/ipTable.h"
 
 /*test that the method creates an random value for id and that it is
-  within given range
-*/
+  within given range*/
 static void generatesRandomAddress(){
     int nm = 168;
     int m = 0;
@@ -56,8 +55,7 @@ static void generatesAddressThatChangesNetmask(){
 }
 
 /*An ipTable is created and a random address is given into it. The given address 
-  should be same as the result that comes from the genereteAddress function
-*/
+  should be same as the result that comes from the genereteAddress function*/
 static void generatedAddressIsGivenToIpTable(){
     int nm = 168;
     int m = 1;

@@ -5,6 +5,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "./headers/routing.h"
 
 //Function to check if the address is the searched destination
@@ -15,7 +16,8 @@ int checkIfRightAddress(ipTable * table, int netB, int maskB,int idB){
 	return 0;    
 }
 
-/*Function checks if the next table is visited, a dead end or in that case if it is the right destination. See getNextHop*/
+/*Function checks if the next table is visited, under the searched value, 
+  a dead end or in that case if it is the right destination. See getNextHop*/
 int checkNextTable(ipTable * nextTable, int netmask, int mask,int id){	
 	if(nextTable->visited == 3){
 		return 0;
@@ -25,7 +27,9 @@ int checkNextTable(ipTable * nextTable, int netmask, int mask,int id){
 		return 2;
 	}else if(nextTable->netmask < netmask && (nextTable->lengthOfDestinations > 1)){
 		return 4;	
-	}else if(nextTable->mask <= mask && (nextTable->lengthOfDestinations > 1)){
+	}else if(nextTable->mask < mask && (nextTable->lengthOfDestinations > 1)){
+		return 4;
+	}else if(nextTable->mask == mask && (nextTable->identifier <= id) && (nextTable->lengthOfDestinations > 1)){
 		return 4;
 	}else if(checkIfRightAddress(nextTable, netmask, mask, id)){
 		return 4;
@@ -43,7 +47,7 @@ int checkNextTable(ipTable * nextTable, int netmask, int mask,int id){
   and then heads back if necessary. See traceRoute
 */
 ipTable * getNextHop(ipTable * table, int net, int mask, int id){
-	int checker, indexOflastVisited=-1, indexOfLastDead = -1;
+	int checker, indexOflastVisited=-1, indexOfLastDead = -1, amountOfUnvisited=0;
 	ipTable * nextDestination = NULL; 
 	for(int j = 0; j < table->lengthOfDestinations; j++){
 		checker = checkNextTable(table->destinations[j], net , mask, id);
@@ -56,6 +60,7 @@ ipTable * getNextHop(ipTable * table, int net, int mask, int id){
 			indexOfLastDead = j;
 			continue;
 		}//unvisited "child" found, check if it is the destination:
+		amountOfUnvisited++;
     	nextDestination = table->destinations[j];
     	if(checkIfRightAddress(nextDestination, net, mask, id)){
     		return nextDestination;
@@ -63,6 +68,7 @@ ipTable * getNextHop(ipTable * table, int net, int mask, int id){
 	}/*if nextDestination is still null, tables all destinations have been visited (there is a cycle).*/
 	if(!nextDestination && (indexOflastVisited >=0)){
 		table->visited=2;//set table is visited twice
+		if(table)
 		return table->destinations[indexOflastVisited];
 	}/*the table is a dead end, head back to a twice previously visited table:*/
 	if(!nextDestination){
@@ -71,8 +77,11 @@ ipTable * getNextHop(ipTable * table, int net, int mask, int id){
 			return table->destinations[0];
 		}
 		return table->destinations[indexOfLastDead];
-   	}/*unvisited child found, set table to visited once and return unvisited child:*/
-   	table->visited=1;
+   	}/*unvisited child found.
+ 	  Set visited to 1 or 2 if it has only one unvisited child and return the unvisited child:*/
+
+    table->visited=1;
+   
    	return nextDestination;
 }
 /*
@@ -94,6 +103,8 @@ ipTable * traceRoute(ipTable* start, int hopCount, int netmask, int submask, int
 		}
 		printf("next destination is: %u.%u.%u\n",next->netmask, next->mask, next->identifier);
 	}
+	next = NULL;
+	free(next);
 	printf("not found (the address doesent exist)! %i.%i.%i | hopcount: %i\n",netmask, submask, identifier, hopCount);
 	return NULL;
 }

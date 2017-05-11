@@ -4,7 +4,7 @@
  *
  * Functions for setting ipTables destinations
  */
-
+#include <stdio.h>
 #include <stdlib.h>
 #include "./headers/destinationsCreator.h"
 
@@ -58,7 +58,7 @@ void selectRandomDestinations(ipTable * table, ipTable * createdTables, int numb
   Function sets random amount between 1-5 to tables destinations
 */
 void setDestinations(ipTable * table, ipTable * createdTables, int numberOfCreated){
-	int numberToLink = 5;
+	int numberToLink = 6;
 	//If there are fewer than numberToLink tables created, we need to limit the link amount 
 	if(numberOfCreated <= numberToLink){
 		selectRandomDestinations(table, createdTables, numberOfCreated, numberOfCreated);

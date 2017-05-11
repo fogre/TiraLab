@@ -2,4 +2,4 @@
 *.ODT
 tests/*
 !tests/*.c
-!tests/*.txt
+!tests/*.sh

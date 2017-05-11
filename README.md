@@ -28,16 +28,17 @@ The program takes only one <b>optional</b> command line argument <i>amount</i>. 
 
 Without it, a network of 100000 nodes is created.
 
-### Searching a path
+#### Searching a path
 After a network is created, you can try to search a path to a specific address.
 
 The address is divided into <i>netmask.submask.identifier</i> and they are generated randomly.
+
 First the program asks for the netmask, then submask and identifier. If the address is valid, a route for the node is traced. If address was not found, it means that the address does not exist.
 
-<b>To quit program, give it an empty line (press enter)</b>
+<b>To quit program, enter an empty line (just press enter).</b>
 
 ## Documentation
-The documentation is in Finnish and under documentation folder.
+The documentation is in Finnish and under dokumentaatiot folder.
 
 
 

@@ -8,6 +8,7 @@
 #include <stdarg.h>
 #include <stddef.h>
 #include <setjmp.h>
+#include <time.h>
 #include <cmocka.h>
 #include "../src/headers/ipTable.h"
 #include "../src/headers/destinationsCreator.h"
@@ -15,6 +16,7 @@
 
 
 static int setup(void **state){
+    srand(time(NULL));
     ipTable *tables = malloc(7 * sizeof *tables);
     assert_non_null(tables);
     int netmask = 168;
@@ -65,10 +67,12 @@ static void setsRandomDestinationAndItShouldBeIncludedInBothTables(void **state)
 */
 static void setsAtleastOneRandomDestination(void **state){
     ipTable * set = *state;
-    selectRandomDestinations(&set[5], set, 7, 3);
+    selectRandomDestinations(&set[5], set, 5, 3);
     assert_true(set[5].lengthOfDestinations > 0);
     for(int i = 0; i < set[5].lengthOfDestinations; i++){
-        assert_true(set[5].destinations[i] == &set[2] 
+        assert_true(set[5].destinations[i] == &set[0]
+                    || set[5].destinations[i] == &set[1]
+                    || set[5].destinations[i] == &set[2]
                     || set[5].destinations[i] == &set[3]
                     || set[5].destinations[i] == &set[4]);
     }
@@ -110,8 +114,10 @@ static void setDestinationsForCreatedTablesGreaterNumberToLink(void **state){
 }
 
 /*creates 2000 tables and checks that they all have destinations*/
-static void create2000TablesAndTheyShouldBeConnected(){
-    ipTable *tables = malloc(2000 * sizeof *tables);
+static void create900000TablesAndTheyShouldBeConnected(){
+  srand(time(NULL));  
+  for(int i = 0; i < 100; i++){ 
+    ipTable *tables = malloc(900000 * sizeof *tables);
     assert_non_null(tables);
     int netmask = 168;
     int addressMask = 0;
@@ -125,10 +131,12 @@ static void create2000TablesAndTheyShouldBeConnected(){
         setAddress(&netmask, &addressMask, &addressId, &tables[i]);
         setDestinations(&tables[i],tables, i);
     }
-    for(int j = 1999; j > 0; j--){
+    for(int j = 0; j > 900000; j++){
         assert_non_null(tables[j].destinations);
+        assert_true(tables[j].lengthOfDestinations >0);
     }
-    free(tables);    
+    free(tables);
+  }   
 }
 
 
@@ -139,7 +147,7 @@ int main(void) {
         cmocka_unit_test_setup_teardown(setsAtleastOneRandomDestination, setup, teardown),
         cmocka_unit_test_setup_teardown(setDestinationsForCreatedTablesSmallerNumberToLink, setup, teardown),
         cmocka_unit_test_setup_teardown(setDestinationsForCreatedTablesGreaterNumberToLink, setup, teardown),
-        cmocka_unit_test(create2000TablesAndTheyShouldBeConnected),
+        cmocka_unit_test(create900000TablesAndTheyShouldBeConnected),
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);
