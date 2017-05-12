@@ -37,8 +37,8 @@ int main(int argc, char** argv) {
  	ipTable * tables;
  	tables = malloc(amount * sizeof *tables);
  	if(!tables){
-      printf("Allocating tables failed!\n");
-      exit(EXIT_FAILURE);
+      	  printf("Allocating tables failed!\n");
+          exit(EXIT_FAILURE);
  	}//set addresses and create tables
  	int addressNetmask = 168;
  	int addressMask = 0;
@@ -48,9 +48,9 @@ int main(int argc, char** argv) {
  	tables[0].mask = addressMask;
  	setupTable(&tables[0]);
   	for(int i = 1; i < amount; i++){
-      setupTable(&tables[i]);
-      setAddress(&addressNetmask, &addressMask, &addressId, &tables[i]);
-      setDestinations(&tables[i],tables, i);
+      	   setupTable(&tables[i]);
+           setAddress(&addressNetmask, &addressMask, &addressId, &tables[i]);
+           setDestinations(&tables[i],tables, i);
   	}
   	clock_t end = clock();
 	//Search first address: This is a copy of traceroute function. 
@@ -60,16 +60,16 @@ int main(int argc, char** argv) {
 	for(h = 0; h < amount; h++){
 		next = getNextHop(next, tables[index].netmask, tables[index].mask, tables[index].identifier);
 		if(!next){//Break in case something goes wrong
-			printf("next is null!\n");
-			return (EXIT_FAILURE);
+		   printf("next is null!\n");
+		   return (EXIT_FAILURE);
 		}if(checkIfRightAddress(next, tables[index].netmask, tables[index].mask, tables[index].identifier)){
-			hopCountOneFourth = h;
-			break;
+		   hopCountOneFourth = h;
+		   break;
 		}
 	}
 	if(h >= amount){
-		printf("Failure! %i %i\n", index,h);
-		return (EXIT_FAILURE);
+	   printf("Failure! %i %i\n", index,h);
+	   return (EXIT_FAILURE);
 	}
 	resetSearch(tables, amount);
 
@@ -87,8 +87,8 @@ int main(int argc, char** argv) {
 		}
 	}
 	if(h >= amount){
-		printf("Failure! %i %i\n", index,h);
-		return (EXIT_FAILURE);
+	  printf("Failure! %i %i\n", index,h);
+	  return (EXIT_FAILURE);
 	}
 	resetSearch(tables, amount);
 
@@ -106,8 +106,8 @@ int main(int argc, char** argv) {
 		}
 	}
 	if(h >= amount){
-		printf("Failure! %i %i\n", index,h);
-		return (EXIT_FAILURE);
+	  printf("Failure! %i %i\n", index,h);
+	  return (EXIT_FAILURE);
 	}
 
 	next = NULL;
