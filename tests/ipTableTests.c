@@ -72,9 +72,30 @@ static void generatedAddressIsGivenToIpTable(){
     assert_int_equal(*id, table.identifier);
 }
 
-
+/*Call create network function.
+  The function should create a network of size 100 where every node has destinations.
+  After this, the function frees the destinations and they should be null;
+*/
 static void testCreateNetwork(){
-
+  ipTable * les = malloc(100 * sizeof *les);
+  if(!les){
+      printf("Allocating tables failed!\n");
+      exit(EXIT_FAILURE);
+  }
+  //create network:
+  createNetwork(&les, 100);
+  for(int i = 0; i < 100; i++){
+  	assert_non_null(les[i].destinations);
+  	assert_int_equal(les[i].visited, 0);
+  	assert_true(les[i].identifier > 0);
+  	assert_int_equal(les[i].mask, 0);
+  	assert_int_equal(les[i].netmask, 168);
+  }
+  freeDestinations(les, 100);
+  for(int j = 0; j < 100; j++){
+  	assert_true(les[j].destinations == NULL);
+  }
+  free(les);
 
 }
 
@@ -83,6 +104,7 @@ int main(void) {
     	cmocka_unit_test(testSetTable),
     	cmocka_unit_test(testResetSearch),
         cmocka_unit_test(generatedAddressIsGivenToIpTable),
+        cmocka_unit_test(testCreateNetwork),
     };
 
     return cmocka_run_group_tests(tests, setup, teardown);

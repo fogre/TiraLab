@@ -64,7 +64,7 @@ ipTable * getNextHop(ipTable * table, int net, int mask, int id){
     	nextDestination = table->destinations[j];
     	if(checkIfRightAddress(nextDestination, net, mask, id)){
     		return nextDestination;
-    	}
+   		}
 	}/*if nextDestination is still null, tables all destinations have been visited (there is a cycle).*/
 	if(!nextDestination && (indexOflastVisited >=0)){
 		table->visited=2;//set table is visited twice

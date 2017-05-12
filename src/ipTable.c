@@ -38,6 +38,7 @@ void resetSearch(ipTable * tables, int amount){
 //free tables destinations
 void freeDestinations(ipTable * tables, int size){
     for(int i = 0; i < size; i++){
+        tables[i].destinations=NULL;
         free(tables[i].destinations);
     }
 

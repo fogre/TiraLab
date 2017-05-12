@@ -81,7 +81,7 @@ void selectRandomDestinations(ipTable * table, ipTable * createdTables, int numb
 			setDestination;
 			numberOfLinks++;
 		}
-		if(numberOfLinks > h){
+		if(numberOfLinks > z){
 			break;
 		}
 	}//in case after the for there aren't any destinations set, we set one
@@ -141,7 +141,7 @@ O(hopCount + |G|) missä G on verkossa olevien linkkien lukumäärä.
 
 Tämän lisäksi mikäli haku halutaan suorittaa uudestaan, tulee solmujen visited kenttä nollata. Lopulliseksi aikavaatimuksesi tulee tällöin O(hopCount + |G| + n).
 
-Main ja performanceTest luokissa hopCount on sama kuin verkon solmujen lukumäärä. Tämän on todettu löytävän olemassa olevan osoitteen aina, mikäli solmujen lukumäärä on välillä 100-2 000 000. Tästä lisää testidokumentaatiossa. Tilavaatimusta ei juuri ole. 
+Main ja performanceTest luokissa hopCount on sama kuin verkon solmujen lukumäärä. Tämän on todettu löytävän olemassa olevan osoitteen aina, mikäli solmujen lukumäärä on välillä 100-2 000 000. Tästä lisää testidokumentaatiossa.
 
 ## Mitä voisi vielä parantaa:
 * Refraktointi: Etenkin testiluokat kaipaisivat paljon refraktointia
