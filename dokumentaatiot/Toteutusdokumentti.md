@@ -6,7 +6,7 @@ Ohjelma rakentuu kolmen algoritmin ympärille:
 * Verkon generointi
 * Reitin etsiminen luodusta verkosta
 
-Joista osoitteiden luominen ja verkon generointi tapahtuvat samanaikaisesti
+joista osoitteiden luominen ja verkon generointi tapahtuvat samanaikaisesti.
 
 ### Satunnaisen verkon generointi
 Satunnaisen verkon generointi pohjautuu seuraavalle funktiolle:
@@ -61,6 +61,46 @@ void randomAddressGenerator(int * netmask, int * mask, int * id){
 }
 
 ```
+### Verkon generointi
+Verkon generoinnissa aina viimeiseksi ja täten suurimman osoitteen saanut solmu linkitetään satunnaisesti 1-3 aikaisempaan solmuun. Pelkästään x viimeisintä solmua otetaan linkityksessä huomioon, joten verkkossa ei voi olla linkkejä yli x:n pienemän osoitteen omaavaan solmuun. 
+
+```
+void setDestinations(ipTable * table, ipTable * createdTables, int numberOfCreated){
+	int numberToLink = x;
+	//If there are fewer than numberToLink tables created, we need to limit the link amount 
+	if(numberOfCreated <= numberToLink){
+		selectRandomDestinations(table, createdTables, numberOfCreated, numberOfCreated);
+	}else{
+		//numberOfCreated more than numberToLink tables:
+		selectRandomDestinations(table, createdTables, numberOfCreated, numberToLink);
+	}
+}
+
+void selectRandomDestinations(ipTable * table, ipTable * createdTables, int numberOfCreated, int numberToLink){
+	int random;
+	int numberOfLinks = 0;
+	int base = numberOfCreated-numberToLink;
+	for(int j = 0; j < numberToLink; j++){
+		random = rand() % 10+1;
+		if(random > 7){
+			setSingleDestination(table, &createdTables[base+j]);
+			setSingleDestination(&createdTables[base+j], table);
+			numberOfLinks++;
+		}
+		if(numberOfLinks > 3){
+			break;
+		}
+	}//in case after the for there aren't any destinations set, we set one
+	if(numberOfLinks == 0){
+		random = rand() % numberToLink+1;
+		setSingleDestination(table, &createdTables[base+random-1]);
+		setSingleDestination(&createdTables[base+random-1], table);
+	}
+}
+
+```
+
+## Reitin etsiminen verkosta
 
 
 
