@@ -9,7 +9,7 @@ CMOCKAPATH="-l cmocka -L /usr/local/lib"
 
 #build tests
 gcc addressGeneratorTests.c ../src/randomAddressGenerator.c -o addressGeneratorTests $CMOCKAPATH
-gcc ipTableTests.c ../src/randomAddressGenerator.c ../src/ipTable.c -o ipTableTests $CMOCKAPATH
+gcc ipTableTests.c $SOURCES -o ipTableTests $CMOCKAPATH
 gcc destinationsCreatorTests.c $SOURCES -o destinationsCreatorTests $CMOCKAPATH
 gcc routingTests.c $SOURCES ../src/routing.c -o routingTests $CMOCKAPATH
 

@@ -10,6 +10,7 @@
 #include <setjmp.h>
 #include <cmocka.h>
 #include "../src/headers/ipTable.h"
+#include "../src/headers/destinationsCreator.h"
 
 
 static int setup(void **state){
@@ -71,6 +72,11 @@ static void generatedAddressIsGivenToIpTable(){
     assert_int_equal(*id, table.identifier);
 }
 
+
+static void testCreateNetwork(){
+
+
+}
 
 int main(void) {
     const struct CMUnitTest tests[] = {

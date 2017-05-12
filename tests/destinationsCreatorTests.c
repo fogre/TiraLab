@@ -111,6 +111,7 @@ static void setDestinationsForCreatedTablesGreaterNumberToLink(void **state){
     ipTable * set = *state;
     setDestinations(&set[6], set, 6);
     assert_true(set[6].lengthOfDestinations > 0);
+    assert_true(set[6].lengthOfDestinations < 4);
     for(int i = 0; i < set[6].lengthOfDestinations; i++){
         assert_true(set[6].destinations[i] == &set[0] 
                     || set[6].destinations[i] == &set[1]

@@ -32,7 +32,7 @@ Funktio siis alustaa jokaisen luotavan taulukon (setupTable), asettaa niille sat
 
 #### Verkon osoitteiden luominen
 Verkon osoitteet ovat muotoa netmask.submask.identifier. Ensimmäinen solmu saa aina arvokseen 168.0.1 ja loput generoidaan sen pohjalta randomAddressGenerator funktion avulla. Funktio saa parametrikseen edellisen luodun verkon osoitteen arvot, joita se kasvattaa seuraavanlaisesti:
-* identifier: edellisen solmun identifier + satunnainen luku 1-17
+* identifier: edellisen solmun identifier + satunnainen luku välillä 1-17
 * Jos identifierin arvo on yli 999, korjataan arvo välille 1-999 ja kasvatetaan submaskin arvoa satunnaisella luvulla 1-3
 * Jos uuden submaskin arvo on yli 999, korjataan sen arvo välille 1-999 ja kasvatetaan netmaskin arvoa yhdellä
 ```
@@ -58,7 +58,7 @@ void randomAddressGenerator(int * netmask, int * mask, int * id){
 
 ```
 #### Verkon generointi
-Verkon generoinnissa aina viimeiseksi ja täten suurimman osoitteen saanut solmu linkitetään satunnaisesti 1-h aikaisempaan solmuun. Pelkästään x viimeisintä solmua otetaan linkityksessä huomioon, joten verkkossa ei voi olla linkkejä yli x:n pienemmän osoitteen omaavaan solmuun. 
+Verkon generoinnissa aina viimeiseksi ja täten suurimman osoitteen saanut solmu linkitetään satunnaisesti 1-z, jossa z on kokonaisluku, aikaisempaan solmuun. Pelkästään x viimeisintä solmua otetaan linkityksessä huomioon, joten verkkossa ei voi olla linkkejä yli x:n pienemmän osoitteen omaavaan solmuun. 
 
 ```
 void setDestinations(ipTable * table, ipTable * createdTables, int numberOfCreated){
@@ -92,14 +92,15 @@ void selectRandomDestinations(ipTable * table, ipTable * createdTables, int numb
 
 ```
 
+
 Aikavaatimus verkon generoimiselle osoitteineen (ottamatta huomioon satunnaisten lukujen generointia) on O(nx) missä n on solmujen lukumäärä ja x kuinka monta edellistä solmua otetaan linkityksessä huomioon. Tilavaativuus on O(n).
 
 ## Reitin etsiminen verkosta
-Reitinetsinnässä käytetään hyväksi verkon linkitetyn listan rakennetta. Solmusta saavutettavat "lapsi"solmut ovat taulukossa, jossa taulukon viimeinen alkio on aina suurimman osoitteen omaava. Linkitetyt solmut ovat toistensa "lapsia".
+Reitinetsinnässä käytetään hyväksi verkon linkitetyn listan rakennetta. Solmusta saavutettavat "lapsisolmut" ovat taulukossa, jossa taulukon viimeinen alkio on aina suurimman osoitteen omaava. Toisiinsa linkitetyt solmut ovat toistensa "lapsia".
 
 Algoritmille annetaan aloitussolmu ja osoite jota haetaan. Se hakee ahneasti lapsistaan aina isoimman osoitteen omaavaa solmua jossa ei ole käyty, ja jolla on enemmän kuin yksi lapsisolmu. Se etenee tällä tavoin, kunnes vastaan tulee osoite joka on suurempi kuin haettava osoite, tai jos sen kaikissa lapsisolmuissa on jo käyty. Tällöin, mikäli solmulla on käymättömiä lapsia joiden osoite on pienempi kuin haettava, se valitsee isoimman niistä. Muuten se valitsee tilanteen mukaisesti lapsisolmun jossa on käyty jo kerran tai kahdesti. 
 
-Kun solmussa käydään, se merkataan joko numerolla 1 (käyty kerran), 2 (käyty kahdesti) tai 3 (umpikuja). Alussa kaikki solmut ovat merkitty arvolla 0 (käymätön). Näiden lisäksi algoritmi saa parametrinä kokonaisluvun hopCount, joka määrittää kuinka monta kertaa haku seuraavasta solmusta suoritetaan. 
+Kun solmussa käydään, se merkataan joko numerolla 1 (käyty kerran), 2 (käyty kahdesti) tai 3 (umpikuja). Alussa kaikki solmut ovat merkitty arvolla 0 (käymätön). Näiden lisäksi algoritmi saa parametrinä kokonaisluvun hopCount, joka määrittää kuinka monta kertaa haku suoritetaan. 
 
 ```
 traceRoute(ipTable* start, int hopCount, int netmask, int submask, int identifier){
@@ -108,6 +109,7 @@ traceRoute(ipTable* start, int hopCount, int netmask, int submask, int identifie
 	    next = getNextHop(next, netmask, submask, identifier);
 	    if(next is the searched address){
 	       printf(ADDRESS FOUND!);
+	       return;
 	    }
 	}
 	printf("Address not found!");
@@ -133,7 +135,19 @@ ipTable * getNextHop(ipTable * table, int net, int mask, int id){
 }
 
 ```
-Algoritmi toimii vain hauille, joissa haettava osoite on suurempi kuin lähtösolmun osoite. Sen aikavaativuus on pahimmassa tapauksessa ääretön, mikäli hopCount on ääretön ja haettava osoite ei ole olemassa, eli O(hopCount + |G|) missä G on verkossa olevien linkkien lukumäärä. Perustapauksessa hopCount on sama kuin verkon solmujen lukumäärä. Tästä lisää testidokumentissa. 
+Algoritmi toimii vain hauille, joissa haettava osoite on suurempi kuin lähtösolmun osoite. Sen aikavaativuus on pahimmassa tapauksessa ääretön, mikäli hopCount on ääretön ja haettava osoite ei ole olemassa:
+
+O(hopCount + |G|) missä G on verkossa olevien linkkien lukumäärä. 
+
+Tämän lisäksi mikäli haku halutaan suorittaa uudestaan, tulee solmujen visited kenttä nollata. Lopulliseksi aikavaatimuksesi tulee tällöin O(hopCount + |G| + n).
+
+Main ja performanceTest luokissa hopCount on sama kuin verkon solmujen lukumäärä. Tämän on todettu löytävän olemassa olevan osoitteen aina, mikäli solmujen lukumäärä on välillä 100-2 000 000. Tästä lisää testidokumentaatiossa. Tilavaatimusta ei juuri ole. 
+
+## Mitä voisi vielä parantaa:
+* Refraktointi: Etenkin testiluokat kaipaisivat paljon refraktointia
+* Reitin etsintä algoritmin parantaminen: haku isommasta pienempää.
+* hopCount:in ja linkitettävien verkkojen lukumäärän määritteleminen dynaamisesti optimaallisen verkon luomiseksi.
+* Main-luokan uudelleenkirjoittaminen
 
 
 
