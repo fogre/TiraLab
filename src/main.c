@@ -11,7 +11,6 @@
 #include <string.h>
 #include <time.h>
 #include "./headers/ipTable.h"
-#include "./headers/destinationsCreator.h"
 #include "./headers/routing.h"
 
 /*function to check if the command line argument is a positive number with given range*/
@@ -61,15 +60,16 @@ int main(int argc, char** argv) {
   //if command line argument given, validate it
   if(argc > 1){
     if(!isUnsignedNumber(argv[1])){
-      printf("Only the first command line argument is taken into account and it should be a positive integer between 100-1200000!\nExiting\n");
+      printf("Only the first command line argument is taken into account and it should be a positive integer between 100-2000000!\nExiting\n");
       return (EXIT_FAILURE);
     }
     amount = atoi(argv[1]);
-    if(amount < 100 || amount > 1200000){
-      printf("The number of nodes in the network to be created should be between 100-1200000!\nExiting\n");
+    if(amount < 100 || amount > 2000000){
+      printf("The number of nodes in the network to be created should be between 100-2000000!\nExiting\n");
       return (EXIT_FAILURE);
     }
   }
+  
   //init network creation:
   printf("> Creating a network with %i nodes...\n", amount);
   srand(time(NULL));
@@ -77,20 +77,10 @@ int main(int argc, char** argv) {
   if(!tables){
       printf("Allocating tables failed!\n");
       exit(EXIT_FAILURE);
-  }//init addresses and first table:
-  int addressNetmask = 168;
-  int addressMask = 0;
-  int addressId = 1;
-  tables[0].netmask = addressNetmask;
- 	tables[0].identifier = addressId;
- 	tables[0].mask = addressMask;
-  setupTable(&tables[0]);
-  //create network:
-  for(int i = 1; i < amount; i++){
-      setupTable(&tables[i]);
-      setAddress(&addressNetmask, &addressMask, &addressId, &tables[i]);
-      setDestinations(&tables[i],tables, i);
   }
+  //create network:
+  createNetwork(&tables, amount);
+
   //init traceRouting
   int net=-1, mask=-1, id=-1, option;
   char addressToLook[5];
@@ -171,7 +161,9 @@ int main(int argc, char** argv) {
       }
    }//end switch(option)   
   }//end while
+
   destination = NULL;
+  free(destination);
   freeDestinations(tables, amount);
   free(tables);
   return (EXIT_SUCCESS);

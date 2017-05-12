@@ -15,13 +15,15 @@
 
 int main(int argc, char** argv) {
  
-
+  
   int hopCountOneFourth, hopCountMiddle, hopCountLast;
+  //These could be an array but.... works like this as well :D
   double hundredFirst=0, hundredMiddle=0, hundredLast=0;
   double thousandFirst=0, thousandMiddle=0, thousandLast=0;
   double tThousandFirst=0, tThousandMiddle=0, tThousandLast=0;
   double hThousandFirst=0, hThousandMiddle=0, hThousandLast=0;
   double millionFirst=0, millionMiddle=0, millionLast=0;
+  double hTime = 0, thTime=0, tthTime=0, hthTime=0, mTime=0;
   int amount, h, index;
 
   srand(time(NULL));
@@ -31,6 +33,7 @@ int main(int argc, char** argv) {
    while(amount <= 1000000){
    	printf("counting amount %i on iteration %i...\n", amount, z+1);
    	//init tables
+   	clock_t begin = clock();
  	ipTable * tables;
  	tables = malloc(amount * sizeof *tables);
  	if(!tables){
@@ -49,8 +52,9 @@ int main(int argc, char** argv) {
       setAddress(&addressNetmask, &addressMask, &addressId, &tables[i]);
       setDestinations(&tables[i],tables, i);
   	}
-
-	//Search first address: This is a copy of traceroute function, so we can get the hop count  
+  	clock_t end = clock();
+	//Search first address: This is a copy of traceroute function. 
+	//We need to have a copy so we can get the hop count, and for now im too lazy to code otherwise :/  
 	ipTable * next = &tables[0];
 	index = (int) amount/4;
 	for(h = 0; h < amount; h++){
@@ -117,30 +121,35 @@ int main(int argc, char** argv) {
 		  hundredFirst += hopCountOneFourth;
 		  hundredMiddle += hopCountMiddle;
 		  hundredLast += hopCountLast;
+		  hTime += (double)(begin - end) / CLOCKS_PER_SEC;
 		  break;
 
 		case 1000:
 		  thousandFirst += hopCountOneFourth;
 		  thousandMiddle += hopCountMiddle;
 		  thousandLast += hopCountLast;
+		  thTime += (double)(begin - end) / CLOCKS_PER_SEC;
 		  break;
 
 		case 10000:
 		  tThousandFirst += hopCountOneFourth;
 		  tThousandMiddle += hopCountMiddle;
 		  tThousandLast += hopCountLast;
+		  tthTime += (double)(begin - end) / CLOCKS_PER_SEC;
 		  break;
 
 		case 100000:
 		  hThousandFirst += hopCountOneFourth;
 		  hThousandMiddle += hopCountMiddle;
 		  hThousandLast += hopCountLast;
+		  hthTime += (double)(begin - end) / CLOCKS_PER_SEC;
 		  break;
 
 		case 1000000:
 		  millionFirst += hopCountOneFourth;
 		  millionMiddle += hopCountMiddle;
 		  millionLast += hopCountLast;
+		  mTime += (double)(begin - end) / CLOCKS_PER_SEC;
 		  break;
 	}
 	amount = amount * 10;
@@ -163,19 +172,33 @@ int main(int argc, char** argv) {
   millionFirst = millionFirst/20;
   millionMiddle = millionMiddle/20;
   millionLast = millionLast/20;
+  hTime = hTime/20;
+  thTime = thTime/20;
+  tthTime = tthTime/20;
+  hthTime = hthTime/20;
+  mTime = mTime/20;
   printf("\nAverage hop counts to nodes amount/4, amount/2, amount-1:\n");
+  printf("Time to create 100 tables: %f\n", hTime);
   printf("average 100 first: %f\n", hundredFirst);
   printf("average 100 middle: %f\n", hundredMiddle);
   printf("average 100 last: %f\n\n", hundredLast);
+
+  printf("Time to create 1000 tables: %f\n", thTime);
   printf("average 1000 first: %f\n", thousandFirst);
   printf("average 1000 middle: %f\n", thousandMiddle);
   printf("average 1000 last: %f\n\n", thousandLast);
+
+  printf("Time to create 10000 tables: %f\n", tthTime);
   printf("average 10000 first: %f\n", tThousandFirst);
   printf("average 10000 middle: %f\n", tThousandMiddle);
   printf("average 10000 last: %f\n\n", tThousandLast);
+
+  printf("Time to create 100000 tables: %f\n", hthTime);
   printf("average 100000 first: %f\n", hThousandFirst);
   printf("average 100000 middle: %f\n", hThousandMiddle);
   printf("average 100000 last: %f\n\n", hThousandLast);
+
+  printf("Time to create 1000000 tables: %f\n", mTime);
   printf("average 1000000 first: %f\n", millionFirst);
   printf("average 1000000 middle: %f\n", millionMiddle);
   printf("average 1000000 last: %f\n", millionLast);

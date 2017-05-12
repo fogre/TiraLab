@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include "./headers/ipTable.h"
 #include "./headers/randomAddressGenerator.h"
+#include "./headers/destinationsCreator.h"
 
 //function to setup the table
 void setupTable(ipTable * table){
@@ -41,11 +42,33 @@ void freeDestinations(ipTable * tables, int size){
     }
 
 }
-//print tables destinations
+
+/*function creates a network of amount nodes.
+  The destinations are set by setDestinations function located in destinationsCreator.c*/
+void createNetwork(ipTable ** tbls, int amount){
+    ipTable * tables = *tbls;
+    int addressNetmask = 168;
+    int addressMask = 0;
+    int addressId = 1;
+    tables[0].netmask = addressNetmask;
+    tables[0].identifier = addressId;
+    tables[0].mask = addressMask;
+    setupTable(&tables[0]);
+    //create network:
+    for(int i = 1; i < amount; i++){
+        setupTable(&tables[i]);
+        setAddress(&addressNetmask, &addressMask, &addressId, &tables[i]);
+        setDestinations(&tables[i],tables, i);
+    }
+    tables = NULL;
+    free(tables);
+}
+
+
+//print tables destinations, used only for debugging
 void printDestinations(ipTable * table){
     printf("%lu Destinations for 192.168.%u.%u:\n",table->lengthOfDestinations, table->mask, table->identifier);
     for(int j = 0; j < table->lengthOfDestinations; j++){
         printf("    %u.%u\n", table->destinations[j]->mask, table->destinations[j]->identifier);
     }
 }
-

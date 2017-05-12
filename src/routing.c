@@ -69,19 +69,21 @@ ipTable * getNextHop(ipTable * table, int net, int mask, int id){
 	if(!nextDestination && (indexOflastVisited >=0)){
 		table->visited=2;//set table is visited twice
 		if(table)
+		free(nextDestination);
 		return table->destinations[indexOflastVisited];
 	}/*the table is a dead end, head back to a twice previously visited table:*/
 	if(!nextDestination){
 		table->visited=3;//set table is a dead end
 		if(indexOfLastDead == -1){
+			free(nextDestination);
 			return table->destinations[0];
 		}
+		free(nextDestination);
 		return table->destinations[indexOfLastDead];
    	}/*unvisited child found.
  	  Set visited to 1 or 2 if it has only one unvisited child and return the unvisited child:*/
 
     table->visited=1;
-   
    	return nextDestination;
 }
 /*
@@ -96,6 +98,7 @@ ipTable * traceRoute(ipTable* start, int hopCount, int netmask, int submask, int
 		next = getNextHop(next, netmask, submask, identifier);
 		if(!next){//Break in case something goes wrong
 			printf("next is null!\n");
+			free(next);
 			return NULL;
 		}if(checkIfRightAddress(next, netmask, submask, identifier)){
 			printf("address found! %i.%i.%i   | hopcount: %i\n", netmask, submask, identifier, h+1);

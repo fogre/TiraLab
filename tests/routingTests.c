@@ -71,10 +71,13 @@ static void testCheckNextTable(void ** state){
 /*Sets 1000 times 1000 node size network and tries to find a path to the last node
   The destination table shound't be null, and it should be the last node*/
 static void set1000destinationsAndFindRouteToLastTable(){
+	int amount;
+	ipTable * destination;
 
 	for(int i = 0; i < 1000; i++){
-		int amount = 1000;    
-	    ipTable * tables;
+		amount = 1000;
+		destination = NULL;
+		ipTable * tables;
 	    tables = malloc(amount * sizeof *tables);
 	    assert_non_null(tables);
 		int addressNetmask = 168;
@@ -90,19 +93,25 @@ static void set1000destinationsAndFindRouteToLastTable(){
 			setAddress(&addressNetmask, &addressMask, &addressId, &tables[i]);
 			setDestinations(&tables[i],tables, i);
 		}
-		ipTable * destination = traceRoute(&tables[0], 1000, tables[amount-1].netmask, tables[amount-1].mask, tables[amount-1].identifier);
+		destination = traceRoute(&tables[0], amount, tables[amount-1].netmask, tables[amount-1].mask, tables[amount-1].identifier);
 		assert_true(destination != NULL);
 		assert_true(destination == &tables[amount-1]);
 		freeDestinations(tables, amount);
 		free(tables);
-	}	
+	}
+	destination=NULL;
+	free(destination);	
 }	
 /*Sets 1000 times 2000 node size network and tries to find a path to a random node
   The destination table shound't be null, the found table should be the same as the searched table and the index should be the right one*/
 static void set2000destinationsAndFindRouteToRandomTable(){
+	int amount;
+	ipTable * destination;
 
 	for(int i = 0; i < 1000; i++){
-		int amount = 2000;    
+		amount = 2000;
+		int hCount = (int)amount/2;
+		destination = NULL;
 	    ipTable * tables;
 	    tables = malloc(amount * sizeof *tables);
 	    assert_non_null(tables);
@@ -120,7 +129,7 @@ static void set2000destinationsAndFindRouteToRandomTable(){
 			setDestinations(&tables[i],tables, i);
 		}
 	    int random = rand() % amount;
-		ipTable * destination = traceRoute(&tables[0], amount, tables[random].netmask, tables[random].mask, tables[random].identifier);
+		destination = traceRoute(&tables[0], hCount, tables[random].netmask, tables[random].mask, tables[random].identifier);
 		printf("ma %i\n", i);
 		int o;
 		for(o = 0; o < random+10; o++){
@@ -133,16 +142,21 @@ static void set2000destinationsAndFindRouteToRandomTable(){
 		assert_true(destination == &tables[random]);
 		freeDestinations(tables, amount);
 		free(tables);
-	}	
+	}
+	destination=NULL;
+	free(destination);
 }	
 
 
 /*Sets 100 times 100 node size network and tries to find a path to a random and last node
   The destination table shound't be null and the found table should be the same as the searched table.*/
 static void set100destinationsAndFindRouteToLastAndRandomTable(){
-	int i;
+	int i, amount;
+	ipTable * destination;
 	for(i = 0; i < 100; i++){
-		int amount = 100;    
+		amount = 100;
+		int hCount = (int)amount/2;
+		destination = NULL; 
 	    ipTable * tables;
 	    tables = malloc(amount * sizeof *tables);
 	    assert_non_null(tables);
@@ -160,30 +174,33 @@ static void set100destinationsAndFindRouteToLastAndRandomTable(){
 			setDestinations(&tables[i],tables, i);
 		}
    		int random = rand() % amount;
-		ipTable * destination = traceRoute(&tables[0], amount, tables[random].netmask, tables[random].mask, tables[random].identifier);
+		ipTable * destination = traceRoute(&tables[0], hCount, tables[random].netmask, tables[random].mask, tables[random].identifier);
 		printf("ma %i\n", i);	
 		assert_true(destination != NULL);
 		assert_true(destination == &tables[random]);
 		resetSearch(tables, amount);
-		destination = traceRoute(&tables[0], amount, tables[amount-1].netmask, tables[amount-1].mask, tables[amount-1].identifier);
+		destination = traceRoute(&tables[0], hCount, tables[amount-1].netmask, tables[amount-1].mask, tables[amount-1].identifier);
 	    printf("ma %i\n", i);	
 		assert_true(destination != NULL);
 		assert_true(destination == &tables[amount-1]);
-		destination = NULL;
-		free(destination);
 		freeDestinations(tables, amount);
 		free(tables);
 		}
+	destination = NULL;
+	free(destination);	
 
 }	
 
 
-/*Sets 100 times 1000000 node size network and tries to find a path to a random and last node
+/*Sets 50 times 2000000 node size network and tries to find a path to a random and last node
   The destination table shound't be null and the found table should be the same as the searched table*/
-static void set1000000destinationsAndFindRouteToLastAndRandomTable(){
-	int i;
+static void set2000000destinationsAndFindRouteToLastAndRandomTable(){
+	int i, amount;
+	ipTable * destination;
 	for(i = 0; i < 50; i++){
-		int amount = 1200000;    
+		amount = 2000000;
+		int hCount = (int)amount/2;
+		destination = NULL;
 	    ipTable * tables;
 	    tables = malloc(amount * sizeof *tables);
 	    assert_non_null(tables);
@@ -200,39 +217,23 @@ static void set1000000destinationsAndFindRouteToLastAndRandomTable(){
 			setAddress(&addressNetmask, &addressMask, &addressId, &tables[i]);
 			setDestinations(&tables[i],tables, i);
 		}
-		ipTable * destination = NULL;
    		int random = rand() % amount;
-		destination = traceRoute(&tables[0], amount+5, tables[random].netmask, tables[random].mask, tables[random].identifier);
+   		//search for random table
+		destination = traceRoute(&tables[0], hCount, tables[random].netmask, tables[random].mask, tables[random].identifier);
 		printf("ma random! %i\n", i);
-		/*if(!destination){
-		  for(int o = 0; o < amount; o++){
-		  	printf("TABLE %i\n", o);
-	    	printDestinations(&tables[o]);
-	    	printf("\n");
-	      }
-	    }	*/
 		assert_true(destination != NULL);
 		assert_true(destination == &tables[random]);
 		resetSearch(tables, amount);
-		for(int f = 0; f < amount; f++){
-			assert_int_equal(tables[f].visited, 0);
-		}
-		destination = traceRoute(&tables[0], amount+5, tables[amount-1].netmask, tables[amount-1].mask, tables[amount-1].identifier);
+		//search for last table
+		destination = traceRoute(&tables[0], hCount, tables[amount-1].netmask, tables[amount-1].mask, tables[amount-1].identifier);
 	    printf("ma last! %i\n", i);
-	   /* if(!destination){
-		  for(int o = 0; o < amount; o++){
-		  	printf("TABLE %i\n", o);
-	    	printDestinations(&tables[o]);
-	    	printf("\n");
-	      }
-	    }*/
 		assert_true(destination != NULL);
 		assert_true(destination == &tables[amount-1]);
-		destination = NULL;
-		free(destination);
 		freeDestinations(tables, amount);
 		free(tables);
 		}
+	destination = NULL;
+	free(destination);	
 
 }	
 
@@ -246,7 +247,7 @@ int main(void) {
     	cmocka_unit_test(set1000destinationsAndFindRouteToLastTable),
         cmocka_unit_test(set2000destinationsAndFindRouteToRandomTable),
         cmocka_unit_test(set100destinationsAndFindRouteToLastAndRandomTable),
-        cmocka_unit_test(set1000000destinationsAndFindRouteToLastAndRandomTable),
+        cmocka_unit_test(set2000000destinationsAndFindRouteToLastAndRandomTable),
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);

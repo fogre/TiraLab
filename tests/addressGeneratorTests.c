@@ -9,7 +9,7 @@
 #include <stddef.h>
 #include <setjmp.h>
 #include <cmocka.h>
-#include "../src/headers/ipTable.h"
+#include "../src/headers/randomAddressGenerator.h"
 
 /*test that the method creates an random value for id and that it is
   within given range*/
@@ -54,27 +54,25 @@ static void generatesAddressThatChangesNetmask(){
     assert_in_range(*id,1,17);
 }
 
-/*An ipTable is created and a random address is given into it. The given address 
-  should be same as the result that comes from the genereteAddress function*/
-static void generatedAddressIsGivenToIpTable(){
-    int nm = 168;
-    int m = 1;
-    int i = 992;
-    int * mask = &m;
-    int * id = &i;
-    int * nmask = &nm;
-    struct ipTableTag table;
-    setAddress(nmask, mask, id, &table);
-    assert_int_equal(*mask, table.mask);
-    assert_int_equal(*id, table.identifier);
+/*Test correctAddressIfItsOver1000.
+  An address should be 1 if its 1000 and amount-1000 if it is bigger.*/
+static void addressShouldBeOneAnd1000(){
+    int thousand = 1000;
+    int itsOverOneThousaaaaand = 1200;
+    int * p1 = &thousand, * p2 = &itsOverOneThousaaaaand;
+    correctAddressIfItsOver1000(p1);
+    correctAddressIfItsOver1000(p2);
+    assert_int_equal(thousand, 1);
+    assert_int_equal(itsOverOneThousaaaaand, 200);
 }
+
 
 int main(void) {
     const struct CMUnitTest tests[] = {
         cmocka_unit_test(generatesRandomAddress),
         cmocka_unit_test(generatesAddressThatChangesMask),
         cmocka_unit_test(generatesAddressThatChangesNetmask),
-        cmocka_unit_test(generatedAddressIsGivenToIpTable),
+        cmocka_unit_test(addressShouldBeOneAnd1000),
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);

@@ -24,7 +24,7 @@ You need to have Cmake to generate the make files:
 
 `IpGrapher [amount]`
 
-The program takes only one <b>optional</b> command line argument <i>amount</i>. It determines the number of the nodes in the network and it should be an integer between 10-1200000.
+The program takes only one <b>optional</b> command line argument <i>amount</i>. It determines the number of the nodes in the network and it should be an integer between 100-2000 000.
 
 Without it, a network of 100000 nodes is created.
 

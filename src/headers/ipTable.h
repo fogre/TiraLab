@@ -25,7 +25,6 @@ typedef struct ipTableTag{
     struct ipTableTag **destinations;
     //char "integer" used for routing purposes. 0=unvisited, 1 = visited once, 2 = visited twice, 3 = deadend;
     char visited;
-    char unvisitedChildren;
     
 }ipTable;
 
@@ -40,6 +39,8 @@ void resetSearch(ipTable * tables, int amount);
 void freeDestinations(ipTable * tables, int size);
 //print tables destinations
 void printDestinations(ipTable * table);
+//create network
+void createNetwork(ipTable ** tbls, int amount);
 
 #endif	
 

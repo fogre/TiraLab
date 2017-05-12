@@ -1,5 +1,5 @@
 /*
- * Tests for destinationsCreator.h
+ * Tests for destinationsCreator.c
  * The tests use Cmocka
  */
 
@@ -47,6 +47,8 @@ static void setsSingleDestinationAndItShouldBeRight(void **state){
     setSingleDestination(&set[2], &set[3]);
     assert_int_equal(set[2].lengthOfDestinations,1);
     assert_true(set[2].destinations[0] == &set[3]);
+    set = NULL;
+    free(set);
 }
 
 /*Test setRandomDestinations function
@@ -59,6 +61,8 @@ static void setsRandomDestinationAndItShouldBeIncludedInBothTables(void **state)
     //the asserted table should be included into both tables destinations
     assert_true(set[6].destinations[0] == &set[5]);
     assert_true(set[5].destinations[0] == &set[6]);
+    set = NULL;
+    free(set);
 }
 
 /*Test setRandomDestinations function
@@ -76,6 +80,8 @@ static void setsAtleastOneRandomDestination(void **state){
                     || set[5].destinations[i] == &set[3]
                     || set[5].destinations[i] == &set[4]);
     }
+    set = NULL;
+    free(set);
 }
 
 /*Test setDestinations function
@@ -93,6 +99,8 @@ static void setDestinationsForCreatedTablesSmallerNumberToLink(void **state){
                     || set[3].destinations[i] == &set[1]
                     || set[3].destinations[i] == &set[2]);
     }
+    set = NULL;
+    free(set);
 }
 /*Test setDestinations function
   Sets random destinations for an IpTable. The function should set at least one destination,
@@ -111,9 +119,11 @@ static void setDestinationsForCreatedTablesGreaterNumberToLink(void **state){
                     || set[6].destinations[i] == &set[4]
                     || set[6].destinations[i] == &set[5]);
     }
+    set = NULL;
+    free(set);
 }
 
-/*creates 2000 tables and checks that they all have destinations*/
+/*creates 100*900000 tables and checks that they all have destinations*/
 static void create900000TablesAndTheyShouldBeConnected(){
   srand(time(NULL));  
   for(int i = 0; i < 100; i++){ 
