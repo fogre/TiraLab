@@ -27,7 +27,7 @@ Integraatiotesti luo 20 kertaa 100, 1000, 10000, 100000 ja 1 000 000 kokoisen ve
 
 ![HopCount](hopCount.png)
 
-HopCount on siis noin:
+Verkon koolla 100, 1000, 10000, 100000 ja miljoona hopCount on siis noin:
 * 6.8% verkon solmujen määrästä neljännekseen solmuun
 * 13.3% verkon solmujen määrästä keskimmäiseen solmuun
 * 26% verkon solmujen määrästä viimeiseen solmuun
