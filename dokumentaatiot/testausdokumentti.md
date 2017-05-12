@@ -35,7 +35,7 @@ Verkon koolla 100, 1000, 10000, 100000 ja miljoona hopCount on siis noin:
 
 ## hopCount ja linkitettävien solmujen lukumäärä
 
-Kun verkko luodaan, otetaan yksittäisen solmun linkityksessä huomioon pelkästään x kpl viimeisintä suurimman osoitteen omaavaa solmua. Perusarvona x = 6 ja tätä on käytetty kaikissa testeissä. Suurilla verkoilla x:n arvolla on luonnollisesti suurta vaikutusta reitinhakuun:
+Kun verkko luodaan, otetaan yksittäisen solmun linkityksessä huomioon pelkästään x kpl viimeisintä suurimman osoitteen omaavaa solmua. Perusarvona x = 6 ja tätä on käytetty kaikissa testeissä. Suurilla verkoilla x:n arvolla on luonnollisesti suurta vaikutusta reitinhakuun. Alla taulukko, jossa haetaan reittiä ensimmäisestä viimeiseen solmuun:
 
 Verkon koko | x | hopCount
 ------------|---|---------
