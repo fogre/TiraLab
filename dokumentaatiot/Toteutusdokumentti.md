@@ -1,5 +1,4 @@
 # Toteutusdokumentti
-## Yleisrakenne
 
 Ohjelma rakentuu kolmen algoritmin ympärille:
 * Verkon osoitteiden luominen
@@ -8,8 +7,8 @@ Ohjelma rakentuu kolmen algoritmin ympärille:
 
 joista osoitteiden luominen ja verkon generointi tapahtuvat samanaikaisesti.
 
-### Satunnaisen verkon generointi
-Satunnaisen verkon generointi pohjautuu seuraavalle funktiolle:
+## Satunnaisen verkon generointi
+Verkko on suuntaamaton ja perustuu linkitettyihin listoihin, joissa jokaisella solmulla on lista saavutettavista solmuista. Satunnaisen verkon generointi pohjautuu seuraavalle funktiolle:
 ```
 void createNetwork(ipTable ** tbls, int amount){
     ipTable * tables = *tbls;
@@ -26,9 +25,8 @@ void createNetwork(ipTable ** tbls, int amount){
         setAddress(&addressNetmask, &addressMask, &addressId, &tables[i]);
         setDestinations(&tables[i],tables, i);
     }
-    tables = NULL;
-    free(tables);
-}
+    ...
+} 
 ```
 Funktio siis alustaa jokaisen luotavan taulukon (setupTable), asettaa niille satunnaisen osoitteen (setAddress) sekä liittää jokaisen solmun verkkoon (setDestinations). 
 
@@ -47,12 +45,10 @@ void setAddress(int * netmask, int * mask, int * id, ipTable * table){
 
 //function to generate a random IP address;
 void randomAddressGenerator(int * netmask, int * mask, int * id){
-    int random = *id + (rand() % 17+1);
-    *id = random;
+    *id += random 1-17
     if(*id >= 1000){//correct id address and increase mask
         correctAddressIfItsOver1000(id);
-        random = *mask + (rand() % 3+1);
-        *mask = random;
+        *mask += random 1-3
         if(*mask >= 1000){//correct mask address and increace netmask by 1
             correctAddressIfItsOver1000(mask);
             *netmask = *netmask+1;
@@ -61,46 +57,84 @@ void randomAddressGenerator(int * netmask, int * mask, int * id){
 }
 
 ```
-### Verkon generointi
-Verkon generoinnissa aina viimeiseksi ja täten suurimman osoitteen saanut solmu linkitetään satunnaisesti 1-3 aikaisempaan solmuun. Pelkästään x viimeisintä solmua otetaan linkityksessä huomioon, joten verkkossa ei voi olla linkkejä yli x:n pienemän osoitteen omaavaan solmuun. 
+#### Verkon generointi
+Verkon generoinnissa aina viimeiseksi ja täten suurimman osoitteen saanut solmu linkitetään satunnaisesti 1-h aikaisempaan solmuun. Pelkästään x viimeisintä solmua otetaan linkityksessä huomioon, joten verkkossa ei voi olla linkkejä yli x:n pienemmän osoitteen omaavaan solmuun. 
 
 ```
 void setDestinations(ipTable * table, ipTable * createdTables, int numberOfCreated){
 	int numberToLink = x;
 	//If there are fewer than numberToLink tables created, we need to limit the link amount 
 	if(numberOfCreated <= numberToLink){
-		selectRandomDestinations(table, createdTables, numberOfCreated, numberOfCreated);
+	   selectRandomDestinations(table, createdTables, numberOfCreated, numberOfCreated);
 	}else{
-		//numberOfCreated more than numberToLink tables:
-		selectRandomDestinations(table, createdTables, numberOfCreated, numberToLink);
+	   //numberOfCreated more than numberToLink tables:
+	   selectRandomDestinations(table, createdTables, numberOfCreated, numberToLink);
 	}
 }
 
 void selectRandomDestinations(ipTable * table, ipTable * createdTables, int numberOfCreated, int numberToLink){
-	int random;
 	int numberOfLinks = 0;
 	int base = numberOfCreated-numberToLink;
 	for(int j = 0; j < numberToLink; j++){
 		random = rand() % 10+1;
 		if(random > 7){
-			setSingleDestination(table, &createdTables[base+j]);
-			setSingleDestination(&createdTables[base+j], table);
+			setDestination;
 			numberOfLinks++;
 		}
-		if(numberOfLinks > 3){
+		if(numberOfLinks > h){
 			break;
 		}
 	}//in case after the for there aren't any destinations set, we set one
 	if(numberOfLinks == 0){
-		random = rand() % numberToLink+1;
-		setSingleDestination(table, &createdTables[base+random-1]);
-		setSingleDestination(&createdTables[base+random-1], table);
+		setDestination;
 	}
 }
 
 ```
 
+Aikavaatimus verkon generoimiselle osoitteineen (ottamatta huomioon satunnaisten lukujen generointia) on O(nx) missä n on solmujen lukumäärä ja x kuinka monta edellistä solmua otetaan linkityksessä huomioon. Tilavaativuus on O(n).
+
 ## Reitin etsiminen verkosta
+Reitinetsinnässä käytetään hyväksi verkon linkitetyn listan rakennetta. Solmusta saavutettavat "lapsi"solmut ovat taulukossa, jossa taulukon viimeinen alkio on aina suurimman osoitteen omaava. Linkitetyt solmut ovat toistensa "lapsia".
+
+Algoritmille annetaan aloitussolmu ja osoite jota haetaan. Se hakee ahneasti lapsistaan aina isoimman osoitteen omaavaa solmua jossa ei ole käyty, ja jolla on enemmän kuin yksi lapsisolmu. Se etenee tällä tavoin, kunnes vastaan tulee osoite joka on suurempi kuin haettava osoite, tai jos sen kaikissa lapsisolmuissa on jo käyty. Tällöin, mikäli solmulla on käymättömiä lapsia joiden osoite on pienempi kuin haettava, se valitsee isoimman niistä. Muuten se valitsee tilanteen mukaisesti lapsisolmun jossa on käyty jo kerran tai kahdesti. 
+
+Kun solmussa käydään, se merkataan joko numerolla 1 (käyty kerran), 2 (käyty kahdesti) tai 3 (umpikuja). Alussa kaikki solmut ovat merkitty arvolla 0 (käymätön). Näiden lisäksi algoritmi saa parametrinä kokonaisluvun hopCount, joka määrittää kuinka monta kertaa haku seuraavasta solmusta suoritetaan. 
+
+```
+traceRoute(ipTable* start, int hopCount, int netmask, int submask, int identifier){
+	next = start;
+	for(int h = 0; h < hopCount; h++){
+	    next = getNextHop(next, netmask, submask, identifier);
+	    if(next is the searched address){
+	       printf(ADDRESS FOUND!);
+	    }
+	}
+	printf("Address not found!");
+}
+
+ipTable * getNextHop(ipTable * table, int net, int mask, int id){
+	ipTable * nextDestination = NULL;
+	for(int j = 0; j < table->AMOUNTofCHILDREN; j++){
+	    if(The childnode has been visited already or its a dead end){
+	       continue;
+	     }
+             //unvisited "child" found, check if it is the destination:
+    	     nextDestination = unvisitedChild;
+    	}
+	}/*if nextDestination is still null, tables all destinations have been visited (there is a cycle).*/
+	if(All children visited){
+	  table->visited = 2 OR table->visited = 3;
+	  SelectFromVisitedChildren()
+	}else{
+    	  table->visited=1;
+   	  return nextDestination;
+	}
+}
+
+```
+Algoritmi toimii vain hauille, joissa haettava osoite on suurempi kuin lähtösolmun osoite. Sen aikavaativuus on pahimmassa tapauksessa ääretön, mikäli hopCount on ääretön ja haettava osoite ei ole olemassa, eli O(hopCount + |G|) missä G on verkossa olevien linkkien lukumäärä. Perustapauksessa hopCount on sama kuin verkon solmujen lukumäärä. Tästä lisää testidokumentissa. 
+
 
 
 
